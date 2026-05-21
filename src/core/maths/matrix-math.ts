@@ -123,8 +123,8 @@ export class MatrixMath {
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         if (i === row && j === col) nextMatrix[i][j] = 1 / pivot;
-        else if (i === row) nextMatrix[i][j] = matrix[row][j] / pivot;
-        else if (j === col) nextMatrix[i][j] = -matrix[i][col] / pivot;
+        else if (i === row) nextMatrix[i][j] = -matrix[row][j] / pivot;
+        else if (j === col) nextMatrix[i][j] = matrix[i][col] / pivot;
         else
           nextMatrix[i][j] =
             matrix[i][j] - (matrix[i][col] * matrix[row][j]) / pivot;
