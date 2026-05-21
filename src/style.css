@@ -303,6 +303,7 @@ main {
   display: flex;
   gap: 10px;
   margin-top: 4px;
+  justify-content: flex-start;
 }
 
 .btn {
@@ -315,7 +316,8 @@ main {
   transition: all 0.2s;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  flex: 1;
+  flex: 0 0 auto;
+  min-width: 88px;
 
   &:hover {
     transform: translateY(-2px);
@@ -337,9 +339,11 @@ main {
   color: white;
   border: none;
 
+  min-width: 128px;
+
   &:hover:not(:disabled) {
     background: var(--accent);
-    opacity: 0.9;
+    opacity: 0.95;
   }
 }
 
@@ -413,8 +417,9 @@ main {
   }
 
   .btn {
-    padding: 10px 14px;
+    padding: 8px 12px;
     font-size: 13px;
+    min-width: 74px;
   }
 
   .log-output {
