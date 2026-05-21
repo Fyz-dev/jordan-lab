@@ -60,7 +60,7 @@ function updateMatrixSize() {
   }
 
   const isSolve = mode === 'solve';
-  vectorSection.style.display = isSolve ? 'block' : 'none';
+  vectorSection.style.display = isSolve ? 'flex' : 'none';
 
   if (isSolve) {
     renderVectorInputs(rows);
@@ -107,7 +107,7 @@ function renderMatrixInputs(rows: number, cols: number) {
     }
   }
 
-  container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  container.style.gridTemplateColumns = `repeat(${cols}, max-content)`;
 }
 
 function renderVectorInputs(size: number) {
