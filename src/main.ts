@@ -16,6 +16,8 @@ app.innerHTML = `
           <div class="mode-selector">
             <label for="mode">Операція:</label>
             <select id="mode" class="mode-select">
+              <option value="inverse">Обернена матриця</option>
+              <option value="rank">Ранг матриці</option>
               <option value="solve">Розв'язання СЛАР (метод 1)</option>
             </select>
           </div>
@@ -78,13 +80,29 @@ let matrixMath: MatrixMath;
 function updateMatrixSize() {
   const rows = parseInt(rowsInput.value);
   const cols = parseInt(colsInput.value);
+  const mode = modeSelect.value;
 
-  // Всегда квадратная матрица для СЛАР
-  colsInput.value = String(rows);
-  colsInput.disabled = true;
+  const isSquareOperation = mode === 'inverse' || mode === 'solve';
 
-  renderMatrixInputs(rows, rows);
-  renderVectorInputs(rows);
+  if (isSquareOperation) {
+    colsInput.value = String(rows);
+    colsInput.disabled = true;
+    renderMatrixInputs(rows, rows);
+  } else {
+    colsInput.disabled = false;
+    renderMatrixInputs(rows, cols);
+  }
+
+  const isSolve = mode === 'solve';
+  vectorSection.style.display = isSolve ? 'block' : 'none';
+
+  if (isSolve) {
+    renderVectorInputs(rows);
+  } else {
+    const container =
+      document.querySelector<HTMLDivElement>('#vectorContainer')!;
+    container.innerHTML = '';
+  }
 }
 
 function createRandomMatrix(rows: number, cols: number): number[][] {
@@ -95,6 +113,12 @@ function createRandomMatrix(rows: number, cols: number): number[][] {
   return boundMatrix.map((row: number[]) =>
     row.map(() => Math.floor(Math.random() * 19) - 9)
   );
+}
+
+function createRandomVector(size: number): number[] {
+  const boundVector: number[] = Array.from({ length: size }, () => 0);
+
+  return boundVector.map(() => Math.floor(Math.random() * 19) - 9);
 }
 
 function renderMatrixInputs(rows: number, cols: number) {
@@ -124,11 +148,13 @@ function renderVectorInputs(size: number) {
   const container = document.querySelector<HTMLDivElement>('#vectorContainer')!;
   container.innerHTML = '';
 
+  const vector = createRandomVector(size);
+
   for (let i = 0; i < size; i++) {
     const input = document.createElement('input');
     input.type = 'number';
     input.className = 'vector-input-field';
-    input.value = String(Math.floor(Math.random() * 9) + 1);
+    input.value = String(vector[i]);
     input.dataset.index = String(i);
     container.appendChild(input);
   }
@@ -200,25 +226,39 @@ function formatVectorForLog(vector: number[]): string {
 
 function calculate() {
   try {
-    const rows = parseInt(rowsInput.value);
-    const cols = parseInt(colsInput.value);
+    const mode = modeSelect.value;
 
     const matrix = getMatrixFromInputs();
     if (!matrix) return;
 
-    const vector = getVectorFromInputs();
-    if (!vector) return;
-
     matrixMath = new MatrixMath();
 
-    const result = `=== РОЗВ'ЯЗАННЯ СЛАР (МЕТОД 1 - ОБЕРНЕНА МАТРИЦЯ) ===\n\nСистема рівнянь: Ax = B\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n\nВектор B:\n${formatVectorForLog(vector)}\n`;
+    let output = '';
 
-    const solution = matrixMath.solveLinearSystem(matrix, vector);
-    let output = result;
-    if (!solution) {
-      output += "\n❌ Система не має розв'язку (матриця A не оборотна)";
+    if (mode === 'inverse') {
+      const inverse = matrixMath.invertMatrix(matrix);
+      output = `=== ОБЕРНЕНА МАТРИЦЯ ===\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n`;
+
+      if (!inverse) {
+        output += '\n❌ Матриця не є оборотною';
+      } else {
+        output += `\nA^-1:\n${formatMatrixForLog(inverse)}\n`;
+      }
+    } else if (mode === 'rank') {
+      const rank = matrixMath.calculateRank(matrix);
+      output = `=== РАНГ МАТРИЦІ ===\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n\nРанг: ${rank}\n`;
     } else {
-      output += `\nРозв'язок x:\n${formatVectorForLog(solution)}\n`;
+      const vector = getVectorFromInputs();
+      if (!vector) return;
+
+      const solution = matrixMath.solveLinearSystem(matrix, vector);
+      output = `=== РОЗВ'ЯЗАННЯ СЛАР (МЕТОД 1 - ОБЕРНЕНА МАТРИЦЯ) ===\n\nСистема рівнянь: Ax = B\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n\nВектор B:\n${formatVectorForLog(vector)}\n`;
+
+      if (!solution) {
+        output += "\n❌ Система не має розв'язку (матриця A не оборотна)";
+      } else {
+        output += `\nРозв'язок x:\n${formatVectorForLog(solution)}\n`;
+      }
     }
 
     output += `\n${'='.repeat(50)}\n📋 ЛОГ ОПЕРАЦІЙ:\n${'='.repeat(50)}\n`;
@@ -252,7 +292,13 @@ function clear() {
 modeSelect.addEventListener('change', () => {
   const isSolve =
     modeSelect.value === 'solve' || modeSelect.value === 'gaussian';
-  if (isSolve && parseInt(rowsInput.value) !== parseInt(colsInput.value)) {
+  const isSquareOperation =
+    modeSelect.value === 'inverse' || modeSelect.value === 'solve';
+
+  if (
+    isSquareOperation &&
+    parseInt(rowsInput.value) !== parseInt(colsInput.value)
+  ) {
     rowsInput.value = colsInput.value;
   }
   updateMatrixSize();
