@@ -1,13 +1,70 @@
 <!doctype html>
-<html lang="en">
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>jordan-lab</title>
+    <title>Метод Жорданових Виключень</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="container">
+        <header>
+          <h1>Метод Жорданових Виключень</h1>
+          <p>Розв'язання систем лінійних рівнянь</p>
+        </header>
+
+        <main>
+          <section class="input-section">
+            <div class="controls">
+              <div class="matrix-size">
+                <div class="size-input">
+                  <label for="rows">Рядків (n):</label>
+                  <input
+                    type="number"
+                    id="rows"
+                    min="1"
+                    max="10"
+                    value="3"
+                    class="size-input-field"
+                  />
+                </div>
+                <button id="generateBtn" class="btn btn-primary">
+                  Сгенерувати матрицю
+                </button>
+              </div>
+            </div>
+
+            <div class="matrix-input">
+              <label>Матриця A:</label>
+              <div id="matrixContainer" class="matrix-inputs"></div>
+            </div>
+
+            <div id="vectorSection" class="vector-input">
+              <label>Вектор B:</label>
+              <div id="vectorContainer" class="vector-inputs"></div>
+            </div>
+
+            <div class="button-group">
+              <button id="calculateBtn" class="btn btn-success">
+                Обчислити
+              </button>
+              <button id="clearBtn" class="btn btn-secondary">Очистити</button>
+            </div>
+          </section>
+
+          <section class="output-section">
+            <label for="logOutput">Лог обчислень:</label>
+            <textarea
+              id="logOutput"
+              class="log-output"
+              readonly
+              placeholder="Результати будуть виведені сюди..."
+            ></textarea>
+          </section>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
