@@ -40,7 +40,7 @@ function syncSizeInput(input: HTMLInputElement) {
   input.value = String(clampSize(parseInt(input.value)));
 }
 
-function updateMatrixSize() {
+function updateMatrixSize(preserve: boolean = false) {
   syncSizeInput(rowsInput);
   syncSizeInput(colsInput);
 
@@ -51,23 +51,60 @@ function updateMatrixSize() {
   const isSquareOperation = mode === 'inverse' || mode === 'solve';
 
   if (isSquareOperation) {
+    // keep cols in sync for square operations but avoid re-render on simple mode switch
     colsInput.value = String(rows);
     colsInput.disabled = true;
-    renderMatrixInputs(rows, rows);
+    if (!preserve) renderMatrixInputs(rows, rows);
   } else {
     colsInput.disabled = false;
-    renderMatrixInputs(rows, cols);
+    if (!preserve) renderMatrixInputs(rows, cols);
   }
 
   const isSolve = mode === 'solve';
   vectorSection.style.display = isSolve ? 'flex' : 'none';
 
+  const vectorContainer =
+    document.querySelector<HTMLDivElement>('#vectorContainer')!;
+
   if (isSolve) {
-    renderVectorInputs(rows);
+    // If preserving on mode switch, keep existing vector values and only adjust length
+    const existing = Array.from(
+      vectorContainer.querySelectorAll<HTMLInputElement>('.vector-input-field')
+    );
+    if (!preserve || existing.length === 0) {
+      renderVectorInputs(rows);
+    } else if (existing.length !== rows) {
+      // expand or trim while preserving values
+      const values = existing.map(i => parseFloat(i.value) || 0);
+      if (existing.length < rows) {
+        // append random values to reach needed size
+        const extra = createRandomVector(rows - existing.length);
+        const all = values.concat(extra);
+        vectorContainer.innerHTML = '';
+        all.forEach((v, idx) => {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'vector-input-field';
+          input.value = String(all[idx]);
+          input.dataset.index = String(idx);
+          vectorContainer.appendChild(input);
+        });
+      } else {
+        // trim
+        vectorContainer.innerHTML = '';
+        values.slice(0, rows).forEach((v, idx) => {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'vector-input-field';
+          input.value = String(v);
+          input.dataset.index = String(idx);
+          vectorContainer.appendChild(input);
+        });
+      }
+    }
   } else {
-    const container =
-      document.querySelector<HTMLDivElement>('#vectorContainer')!;
-    container.innerHTML = '';
+    // when not in solve mode, keep vector DOM intact but hidden (so values are not lost)
+    // nothing to do here
   }
 }
 
@@ -330,14 +367,20 @@ modeSelect.addEventListener('change', () => {
   ) {
     rowsInput.value = colsInput.value;
   }
-  updateMatrixSize();
+  // preserve existing input values when switching mode
+  updateMatrixSize(true);
 });
 
-rowsInput.addEventListener('change', updateMatrixSize);
-colsInput.addEventListener('change', updateMatrixSize);
+rowsInput.addEventListener('change', () => updateMatrixSize(false));
+colsInput.addEventListener('change', () => updateMatrixSize(false));
 rowsInput.addEventListener('input', () => syncSizeInput(rowsInput));
 colsInput.addEventListener('input', () => syncSizeInput(colsInput));
-generateBtn.addEventListener('click', updateMatrixSize);
+generateBtn.addEventListener('click', () => {
+  const rows = parseInt(rowsInput.value);
+  const cols = parseInt(colsInput.value);
+  renderMatrixInputs(rows, cols);
+  if (modeSelect.value === 'solve') renderVectorInputs(rows);
+});
 calculateBtn.addEventListener('click', calculate);
 clearBtn.addEventListener('click', clear);
 
