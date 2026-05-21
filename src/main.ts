@@ -11,69 +11,6 @@ type MathLogEntry = {
   };
 };
 
-const app = document.querySelector<HTMLDivElement>('#app')!;
-
-app.innerHTML = `
-  <div class="container">
-    <header>
-      <h1>Метод Жорданових Виключень</h1>
-      <p>Розв'язання систем лінійних рівнянь</p>
-    </header>
-
-    <main>
-      <section class="input-section">
-        <div class="controls">
-          <div class="mode-selector">
-            <label for="mode">Операція:</label>
-            <select id="mode" class="mode-select">
-              <option value="inverse">Обернена матриця</option>
-              <option value="rank">Ранг матриці</option>
-              <option value="solve">Розв'язання СЛАР (метод 1)</option>
-            </select>
-          </div>
-
-          <div class="matrix-size">
-            <div class="size-input">
-              <label for="rows">Рядків (n):</label>
-              <input type="number" id="rows" min="1" max="10" value="3" class="size-input-field">
-            </div>
-            <div class="size-input">
-              <label for="cols">Стовпців (m):</label>
-              <input type="number" id="cols" min="1" max="10" value="3" class="size-input-field">
-            </div>
-            <button id="generateBtn" class="btn btn-primary">Сгенерувати матрицю</button>
-          </div>
-        </div>
-
-        <div class="matrix-input">
-          <label>Матриця A:</label>
-          <div id="matrixContainer" class="matrix-inputs"></div>
-        </div>
-
-        <div id="vectorSection" class="vector-input" style="display: none;">
-          <label>Вектор B:</label>
-          <div id="vectorContainer" class="vector-inputs"></div>
-        </div>
-
-        <div class="button-group">
-          <button id="calculateBtn" class="btn btn-success">Обчислити</button>
-          <button id="clearBtn" class="btn btn-secondary">Очистити</button>
-        </div>
-      </section>
-
-      <section class="output-section">
-        <label for="logOutput">Лог обчислень:</label>
-        <textarea 
-          id="logOutput" 
-          class="log-output" 
-          readonly
-          placeholder="Результати будуть виведені сюди..."
-        ></textarea>
-      </section>
-    </main>
-  </div>
-`;
-
 // Ініціалізація
 const modeSelect = document.querySelector<HTMLSelectElement>('#mode')!;
 const rowsInput = document.querySelector<HTMLInputElement>('#rows')!;

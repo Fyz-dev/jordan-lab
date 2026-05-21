@@ -17,12 +17,32 @@
         <main>
           <section class="input-section">
             <div class="controls">
+              <div class="mode-selector">
+                <label for="mode">Операція:</label>
+                <select id="mode" class="mode-select">
+                  <option value="inverse">Обернена матриця</option>
+                  <option value="rank">Ранг матриці</option>
+                  <option value="solve">Розв'язання СЛАР (метод 1)</option>
+                </select>
+              </div>
+
               <div class="matrix-size">
                 <div class="size-input">
                   <label for="rows">Рядків (n):</label>
                   <input
                     type="number"
                     id="rows"
+                    min="1"
+                    max="10"
+                    value="3"
+                    class="size-input-field"
+                  />
+                </div>
+                <div class="size-input">
+                  <label for="cols">Стовпців (m):</label>
+                  <input
+                    type="number"
+                    id="cols"
                     min="1"
                     max="10"
                     value="3"
@@ -40,7 +60,7 @@
               <div id="matrixContainer" class="matrix-inputs"></div>
             </div>
 
-            <div id="vectorSection" class="vector-input">
+            <div id="vectorSection" class="vector-input" style="display: none">
               <label>Вектор B:</label>
               <div id="vectorContainer" class="vector-inputs"></div>
             </div>
