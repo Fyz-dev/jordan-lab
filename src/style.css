@@ -367,8 +367,7 @@ main {
 
 /* Output */
 .log-output {
-  flex: 1;
-  min-height: 240px;
+  width: 100%;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -377,9 +376,11 @@ main {
   font-family: var(--mono);
   font-size: 12px;
   line-height: 1.5;
-  resize: none;
+  resize: vertical;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow: visible;
+  height: auto;
 
   &:focus {
     outline: none;

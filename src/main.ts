@@ -344,8 +344,10 @@ function calculate() {
     }
 
     logOutput.value = output;
+    autosizeLog();
   } catch (error) {
     logOutput.value = `❌ Помилка: ${error instanceof Error ? error.message : 'невідома помилка'}`;
+    autosizeLog();
   }
 }
 
@@ -354,6 +356,15 @@ function clear() {
   rowsInput.value = '3';
   colsInput.value = '3';
   updateMatrixSize();
+}
+
+function autosizeLog() {
+  try {
+    logOutput.style.height = 'auto';
+    logOutput.style.height = `${logOutput.scrollHeight}px`;
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 // Обробники подій
@@ -383,6 +394,9 @@ generateBtn.addEventListener('click', () => {
 });
 calculateBtn.addEventListener('click', calculate);
 clearBtn.addEventListener('click', clear);
+
+// autosize on manual edits
+logOutput.addEventListener('input', () => autosizeLog());
 
 // Ініціальна генерація
 updateMatrixSize();
