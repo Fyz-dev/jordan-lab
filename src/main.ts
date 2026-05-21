@@ -24,11 +24,26 @@ const vectorSection = document.querySelector<HTMLDivElement>('#vectorSection')!;
 
 let matrixMath: MatrixMath;
 
+const MIN_SIZE = 1;
+const MAX_SIZE = 9;
+
 function formatNumberForLog(value: number, precision: number = 2): string {
   return value.toFixed(precision).replace('.', ',');
 }
 
+function clampSize(value: number): number {
+  if (Number.isNaN(value)) return MIN_SIZE;
+  return Math.min(MAX_SIZE, Math.max(MIN_SIZE, value));
+}
+
+function syncSizeInput(input: HTMLInputElement) {
+  input.value = String(clampSize(parseInt(input.value)));
+}
+
 function updateMatrixSize() {
+  syncSizeInput(rowsInput);
+  syncSizeInput(colsInput);
+
   const rows = parseInt(rowsInput.value);
   const cols = parseInt(colsInput.value);
   const mode = modeSelect.value;
@@ -326,6 +341,8 @@ modeSelect.addEventListener('change', () => {
 
 rowsInput.addEventListener('change', updateMatrixSize);
 colsInput.addEventListener('change', updateMatrixSize);
+rowsInput.addEventListener('input', () => syncSizeInput(rowsInput));
+colsInput.addEventListener('input', () => syncSizeInput(colsInput));
 generateBtn.addEventListener('click', updateMatrixSize);
 calculateBtn.addEventListener('click', calculate);
 clearBtn.addEventListener('click', clear);
