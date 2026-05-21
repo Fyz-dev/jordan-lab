@@ -1,6 +1,16 @@
 import './style.css';
 import { MatrixMath } from '@/core/maths/matrix-math';
 
+type MathLogEntry = {
+  step: number;
+  action: string;
+  description?: string;
+  data?: {
+    matrix?: number[][];
+    vector?: number[];
+  };
+};
+
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
 app.innerHTML = `
@@ -76,6 +86,10 @@ const logOutput = document.querySelector<HTMLTextAreaElement>('#logOutput')!;
 const vectorSection = document.querySelector<HTMLDivElement>('#vectorSection')!;
 
 let matrixMath: MatrixMath;
+
+function formatNumberForLog(value: number, precision: number = 2): string {
+  return value.toFixed(precision).replace('.', ',');
+}
 
 function updateMatrixSize() {
   const rows = parseInt(rowsInput.value);
@@ -216,12 +230,89 @@ function getVectorFromInputs(): number[] | null {
 
 function formatMatrixForLog(matrix: number[][]): string {
   return matrix
-    .map(row => '│ ' + row.map(v => v.toFixed(3).padStart(10)).join(' ') + ' │')
+    .map(
+      row =>
+        '│ ' + row.map(v => formatNumberForLog(v).padStart(10)).join(' ') + ' │'
+    )
     .join('\n');
 }
 
 function formatVectorForLog(vector: number[]): string {
-  return vector.map(v => '│ ' + v.toFixed(3).padStart(10) + ' │').join('\n');
+  return vector
+    .map(v => '│ ' + formatNumberForLog(v).padStart(10) + ' │')
+    .join('\n');
+}
+
+function formatCalculationStep(entry: MathLogEntry): string {
+  const blocks: string[] = [`Крок #${entry.step}`];
+
+  if (entry.action) {
+    blocks.push('', entry.action.trim());
+  }
+
+  if (entry.description) {
+    blocks.push('', entry.description.trim());
+  }
+
+  if (entry.data?.matrix) {
+    blocks.push('', formatMatrixForLog(entry.data.matrix));
+  }
+
+  if (entry.data?.vector) {
+    blocks.push('', formatVectorForLog(entry.data.vector));
+  }
+
+  return blocks.join('\n');
+}
+
+function buildProtocolBlock(entries: MathLogEntry[]): string {
+  return entries.map(entry => formatCalculationStep(entry)).join('\n\n');
+}
+
+function getMatrixSectionTitle(mode: string): string {
+  if (mode === 'rank') return 'Знаходження рангу матриці:';
+  if (mode === 'inverse') return 'Знаходження оберненої матриці:';
+  return "Знаходження розв'язків СЛАР 1-м методом (за допомогою оберненої матриці):";
+}
+
+function buildFinalOutput(
+  mode: string,
+  matrix: number[][],
+  vector: number[] | null,
+  solution: number[] | null,
+  logs: MathLogEntry[]
+): string {
+  const stepLogs = logs.filter(
+    entry =>
+      !entry.action.includes('Вхідна матриця:') &&
+      !entry.action.includes('Обернена матриця') &&
+      !entry.action.includes('Вхідна матриця B') &&
+      !entry.action.includes('Обчислення розв') &&
+      !entry.action.includes('Ранг матриці')
+  );
+
+  const inverseEntry = logs.find(entry =>
+    entry.action.includes('Обернена матриця')
+  );
+  const vectorEntry = logs.find(entry =>
+    entry.action.includes('Вхідна матриця B')
+  );
+  const solutionEntry = logs.find(entry =>
+    entry.action.includes('Обчислення розв')
+  );
+  const rankEntry = logs.find(entry => entry.action.includes('Ранг матриці'));
+
+  let output = `Згенерований протокол обчислення:\n\n${getMatrixSectionTitle(mode)}\n\nВхідна матриця:\n${formatMatrixForLog(matrix)}\n\nПротокол обчислення:\n\n${buildProtocolBlock(stepLogs)}\n`;
+
+  if (mode === 'inverse') {
+    output += `\nОбернена матриця:\n\n${inverseEntry?.data?.matrix ? formatMatrixForLog(inverseEntry.data.matrix) : 'Немає даних'}\n`;
+  } else if (mode === 'rank') {
+    output += `\nРанг матриці:\n\n${rankEntry?.action?.trim() ?? 'Немає даних'}\n`;
+  } else {
+    output += `\nОбернена матриця:\n\n${inverseEntry?.data?.matrix ? formatMatrixForLog(inverseEntry.data.matrix) : 'Немає даних'}\n\nВхідна матриця В:\n\n${vectorEntry?.data?.vector ? formatVectorForLog(vectorEntry.data.vector) : vector ? formatVectorForLog(vector) : 'Немає даних'}\n\nОбчислення розв'язків:\n\n${solutionEntry?.description ?? (solution ? solution.map((value, index) => `X[${index + 1}] = ${formatNumberForLog(value)}`).join('\n') : 'Немає даних')}\n`;
+  }
+
+  return output.trimEnd();
 }
 
 function calculate() {
@@ -236,44 +327,36 @@ function calculate() {
     let output = '';
 
     if (mode === 'inverse') {
-      const inverse = matrixMath.invertMatrix(matrix);
-      output = `=== ОБЕРНЕНА МАТРИЦЯ ===\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n`;
-
-      if (!inverse) {
-        output += '\n❌ Матриця не є оборотною';
-      } else {
-        output += `\nA^-1:\n${formatMatrixForLog(inverse)}\n`;
-      }
+      matrixMath.invertMatrix(matrix);
+      output = buildFinalOutput(
+        mode,
+        matrix,
+        null,
+        null,
+        matrixMath.executionLog as MathLogEntry[]
+      );
     } else if (mode === 'rank') {
       const rank = matrixMath.calculateRank(matrix);
-      output = `=== РАНГ МАТРИЦІ ===\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n\nРанг: ${rank}\n`;
+      output = buildFinalOutput(
+        mode,
+        matrix,
+        null,
+        [rank],
+        matrixMath.executionLog as MathLogEntry[]
+      );
     } else {
       const vector = getVectorFromInputs();
       if (!vector) return;
 
       const solution = matrixMath.solveLinearSystem(matrix, vector);
-      output = `=== РОЗВ'ЯЗАННЯ СЛАР (МЕТОД 1 - ОБЕРНЕНА МАТРИЦЯ) ===\n\nСистема рівнянь: Ax = B\n\nМатриця A:\n${formatMatrixForLog(matrix)}\n\nВектор B:\n${formatVectorForLog(vector)}\n`;
-
-      if (!solution) {
-        output += "\n❌ Система не має розв'язку (матриця A не оборотна)";
-      } else {
-        output += `\nРозв'язок x:\n${formatVectorForLog(solution)}\n`;
-      }
+      output = buildFinalOutput(
+        mode,
+        matrix,
+        vector,
+        solution,
+        matrixMath.executionLog as MathLogEntry[]
+      );
     }
-
-    output += `\n${'='.repeat(50)}\n📋 ЛОГ ОПЕРАЦІЙ:\n${'='.repeat(50)}\n`;
-    output += matrixMath.executionLog
-      .map(entry => {
-        let log = `\n▶ ${entry.description}\n`;
-        if (entry.data?.matrix) {
-          log += 'Матриця:\n' + formatMatrixForLog(entry.data.matrix) + '\n';
-        }
-        if (entry.data?.vector) {
-          log += 'Вектор:\n' + formatVectorForLog(entry.data.vector) + '\n';
-        }
-        return log;
-      })
-      .join('');
 
     logOutput.value = output;
   } catch (error) {

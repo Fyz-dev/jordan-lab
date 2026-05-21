@@ -1,4 +1,4 @@
-import { Matrix } from './matrix-math';
+import type { Matrix } from './matrix-math';
 
 export interface MatrixLogEntry {
   matrix?: Matrix;
