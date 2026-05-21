@@ -13,13 +13,27 @@ export class MatrixMath {
   public invertMatrix(A: Matrix, shouldClear: boolean = true): Matrix | null {
     if (shouldClear) this.logger.clear();
 
+    // must be a non-empty square matrix
+    if (!A || A.length === 0) {
+      throw new Error('Обернення матриці неможливе: порожня матриця');
+    }
+
     const n = A.length;
+    for (let r = 0; r < n; r++) {
+      if (!Array.isArray(A[r]) || A[r].length !== n) {
+        throw new Error(
+          'Обернення матриці неможливе: матриця повинна бути квадратною'
+        );
+      }
+    }
     let res = A.map(row => [...row]);
 
     for (let k = 0; k < n; k++) {
       const pivot = res[k][k];
       if (Math.abs(pivot) < 1e-10) {
-        return null;
+        throw new Error(
+          `Матриця вироджена: опорний елемент A[${k + 1}, ${k + 1}] = ${pivot.toFixed(6)}`
+        );
       }
 
       res = this.stepJordanElimination(res, k, k);
