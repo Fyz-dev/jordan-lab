@@ -255,7 +255,7 @@ function buildFinalOutput(
   if (mode === 'inverse') {
     output += `\nОбернена матриця:\n\n${inverseEntry?.data?.matrix ? formatMatrixForLog(inverseEntry.data.matrix) : 'Немає даних'}\n`;
   } else if (mode === 'rank') {
-    output += `\nРанг матриці:\n\n${rankEntry?.action?.trim() ?? 'Немає даних'}\n`;
+    output += `\n${rankEntry?.action?.trim() ?? 'Немає даних'}\n`;
   } else {
     output += `\nОбернена матриця:\n\n${inverseEntry?.data?.matrix ? formatMatrixForLog(inverseEntry.data.matrix) : 'Немає даних'}\n\nВхідна матриця В:\n\n${vectorEntry?.data?.vector ? formatVectorForLog(vectorEntry.data.vector) : vector ? formatVectorForLog(vector) : 'Немає даних'}\n\nОбчислення розв'язків:\n\n${solutionEntry?.description ?? (solution ? solution.map((value, index) => `X[${index + 1}] = ${formatNumberForLog(value)}`).join('\n') : 'Немає даних')}\n`;
   }
