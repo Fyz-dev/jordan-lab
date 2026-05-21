@@ -126,10 +126,6 @@ function renderVectorInputs(size: number) {
   }
 }
 
-function updateVectorVisibility() {
-  // Вектор завжди видимий для СЛАР
-}
-
 function getMatrixFromInputs(): number[][] | null {
   const inputs = document.querySelectorAll<HTMLInputElement>(
     '.matrix-input-field'
@@ -254,7 +250,7 @@ function buildFinalOutput(
   );
   const rankEntry = logs.find(entry => entry.action.includes('Ранг матриці'));
 
-  let output = `Згенерований протокол обчислення:\n\n${getMatrixSectionTitle(mode)}\n\nВхідна матриця:\n${formatMatrixForLog(matrix)}\n\nПротокол обчислення:\n\n${buildProtocolBlock(stepLogs)}\n`;
+  let output = `${getMatrixSectionTitle(mode)}\n\nВхідна матриця:\n${formatMatrixForLog(matrix)}\n\nПротокол обчислення:\n\n${buildProtocolBlock(stepLogs)}\n`;
 
   if (mode === 'inverse') {
     output += `\nОбернена матриця:\n\n${inverseEntry?.data?.matrix ? formatMatrixForLog(inverseEntry.data.matrix) : 'Немає даних'}\n`;
@@ -325,8 +321,6 @@ function clear() {
 
 // Обробники подій
 modeSelect.addEventListener('change', () => {
-  const isSolve =
-    modeSelect.value === 'solve' || modeSelect.value === 'gaussian';
   const isSquareOperation =
     modeSelect.value === 'inverse' || modeSelect.value === 'solve';
 
