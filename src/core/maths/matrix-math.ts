@@ -1,7 +1,6 @@
 import { ComputationLogger } from '../logger';
-import type { MatrixLogEntry } from './types';
-
-export type Matrix = number[][];
+import type { Matrix, MatrixLogEntry } from './types';
+import { roundData } from './utils';
 
 export class MatrixMath {
   private logger = new ComputationLogger<MatrixLogEntry>();
@@ -41,7 +40,7 @@ export class MatrixMath {
 
     this.logger.log('\nОбернена матриця:', { data: { matrix: res } });
 
-    return this.roundData(res);
+    return roundData(res);
   }
 
   public solveLinearSystem(A: Matrix, B: number[]): number[] | null {
@@ -84,7 +83,7 @@ export class MatrixMath {
       description: paths.join('\n'),
     });
 
-    return this.roundData(X, 1);
+    return roundData(X, 1);
   }
 
   public calculateRank(matrix: Matrix): number {
@@ -156,20 +155,5 @@ export class MatrixMath {
     );
 
     return nextMatrix;
-  }
-
-  private roundData<T extends Matrix | number[]>(
-    data: T,
-    precision: number = 3
-  ): T {
-    const factor = Math.pow(10, precision);
-    if (Array.isArray(data[0])) {
-      return (data as Matrix).map(row =>
-        row.map(val => Math.round(val * factor) / factor)
-      ) as T;
-    }
-    return (data as number[]).map(
-      val => Math.round(val * factor) / factor
-    ) as T;
   }
 }

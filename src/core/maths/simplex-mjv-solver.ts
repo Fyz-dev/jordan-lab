@@ -1,6 +1,7 @@
 import { ComputationLogger } from '../logger';
 import type { LogEntry } from '../logger';
 import type { SimplexLogEntry } from './types';
+import { cloneMatrix, roundData } from './utils';
 
 export interface SimplexParams {
   objective: string;
@@ -102,7 +103,7 @@ export class SimplexMjvSolver {
 
     this.logger.log('Вхідна симплекс-таблиця', {
       data: {
-        matrix: this.cloneMatrix(matrix),
+        matrix: cloneMatrix(matrix),
         rowLabels: [...rowLabels],
         colLabels: [...colLabels],
       },
@@ -227,7 +228,7 @@ export class SimplexMjvSolver {
     let zValue = matrix[rowsCount - 1][colsCount - 1];
     if (type === 'min') zValue = -zValue;
 
-    const roundedX = this.roundData(finalX, 4);
+    const roundedX = roundData(finalX, 4);
     const roundedZ = Math.round(zValue * 10000) / 10000;
 
     this.logger.log('Результат обчислень', {
@@ -279,7 +280,7 @@ export class SimplexMjvSolver {
 
     this.logger.log('Виконано крок МЖВ', {
       data: {
-        matrix: this.cloneMatrix(nextMatrix),
+        matrix: cloneMatrix(nextMatrix),
         rowLabels: [...nextRowLabels],
         colLabels: [...nextColLabels],
       },
@@ -332,14 +333,5 @@ export class SimplexMjvSolver {
       }
     }
     return coeffs;
-  }
-
-  private cloneMatrix(matrix: number[][]): number[][] {
-    return matrix.map(row => [...row]);
-  }
-
-  private roundData(data: number[], precision: number = 3): number[] {
-    const factor = Math.pow(10, precision);
-    return data.map(val => Math.round(val * factor) / factor);
   }
 }
