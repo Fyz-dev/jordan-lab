@@ -177,7 +177,7 @@ export class SimplexMjvSolver {
         }
       }
 
-      if (c === -1) break; // Оптимальность достигнута
+      if (c === -1) break;
 
       let r = -1;
       let minRatio = Infinity;
