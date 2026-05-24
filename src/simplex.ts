@@ -263,8 +263,7 @@ function solveSimplex() {
     const result = solver.solve(params);
 
     if (!result.success) {
-      simplexResult.value = `Помилка: ${result.error ?? 'Невідома помилка.'}`;
-      autosizeResult();
+      alert(`Помилка: ${result.error ?? 'Невідома помилка.'}`);
       return;
     }
 
@@ -276,8 +275,9 @@ function solveSimplex() {
 
     autosizeResult();
   } catch (error) {
-    simplexResult.value = `Помилка: ${error instanceof Error ? error.message : 'Невідома помилка.'}`;
-    autosizeResult();
+    alert(
+      `Помилка: ${error instanceof Error ? error.message : 'Невідома помилка.'}`
+    );
   }
 }
 
