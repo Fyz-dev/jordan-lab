@@ -632,3 +632,117 @@ main {
     border-right-color: var(--border);
   }
 }
+
+.app-shell {
+  width: 100%;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  text-align: left;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100svh;
+  border-right: 1px solid var(--border);
+  background: var(--code-bg);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-title {
+  color: var(--text-h);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-h);
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.nav-link.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  font-weight: 600;
+}
+
+.simplex-form-section {
+  gap: 14px;
+}
+
+.simplex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.simplex-constraints {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.simplex-constraints:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}
+
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .simplex-grid {
+    grid-template-columns: 1fr;
+  }
+}

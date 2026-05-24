@@ -8,87 +8,101 @@
   </head>
   <body>
     <div id="app">
-      <div class="container">
-        <header>
-          <h1>JordanLab</h1>
-          <p>Метод Звичайних Жорданових Виключень</p>
-        </header>
+      <div class="app-shell">
+        <aside class="sidebar">
+          <div class="sidebar-title">JordanLab</div>
+          <nav class="sidebar-nav" aria-label="Навігація по сторінках">
+            <a href="/index.html" class="nav-link active" aria-current="page">
+              Жордановi виключення
+            </a>
+            <a href="/simplex.html" class="nav-link">Simplex solver</a>
+          </nav>
+        </aside>
 
-        <main>
-          <section class="input-section">
-            <div class="controls">
-              <div class="mode-selector">
-                <label for="mode">Операція:</label>
-                <select id="mode" class="mode-select">
-                  <option value="inverse">Обернена матриця</option>
-                  <option value="rank">Ранг матриці</option>
-                  <option value="solve">Розв'язання СЛАР (метод 1)</option>
-                </select>
+        <div class="container">
+          <header>
+            <h1>JordanLab</h1>
+            <p>Метод Звичайних Жорданових Виключень</p>
+          </header>
+
+          <main>
+            <section class="input-section">
+              <div class="controls">
+                <div class="mode-selector">
+                  <label for="mode">Операція:</label>
+                  <select id="mode" class="mode-select">
+                    <option value="inverse">Обернена матриця</option>
+                    <option value="rank">Ранг матриці</option>
+                    <option value="solve">Розв'язання СЛАР (метод 1)</option>
+                  </select>
+                </div>
+
+                <div class="matrix-size">
+                  <div class="size-input">
+                    <label for="rows">Рядків (n):</label>
+                    <input
+                      type="number"
+                      id="rows"
+                      min="1"
+                      max="10"
+                      value="3"
+                      class="size-input-field"
+                    />
+                  </div>
+                  <div class="size-input">
+                    <label for="cols">Стовпців (m):</label>
+                    <input
+                      type="number"
+                      id="cols"
+                      min="1"
+                      max="10"
+                      value="3"
+                      class="size-input-field"
+                    />
+                  </div>
+                  <button id="generateBtn" class="btn btn-primary">
+                    Сгенерувати матрицю
+                  </button>
+                </div>
               </div>
 
-              <div class="matrix-size">
-                <div class="size-input">
-                  <label for="rows">Рядків (n):</label>
-                  <input
-                    type="number"
-                    id="rows"
-                    min="1"
-                    max="10"
-                    value="3"
-                    class="size-input-field"
-                  />
+              <div class="matrix-workspace">
+                <div class="matrix-input">
+                  <label>Матриця A:</label>
+                  <div id="matrixContainer" class="matrix-inputs"></div>
                 </div>
-                <div class="size-input">
-                  <label for="cols">Стовпців (m):</label>
-                  <input
-                    type="number"
-                    id="cols"
-                    min="1"
-                    max="10"
-                    value="3"
-                    class="size-input-field"
-                  />
+
+                <div
+                  id="vectorSection"
+                  class="vector-input"
+                  style="display: none"
+                >
+                  <label>Вектор B:</label>
+                  <div id="vectorContainer" class="vector-inputs"></div>
                 </div>
-                <button id="generateBtn" class="btn btn-primary">
-                  Сгенерувати матрицю
+              </div>
+
+              <div class="button-group">
+                <button id="calculateBtn" class="btn btn-success">
+                  Обчислити
+                </button>
+                <button id="clearBtn" class="btn btn-secondary">
+                  Очистити
                 </button>
               </div>
-            </div>
+            </section>
 
-            <div class="matrix-workspace">
-              <div class="matrix-input">
-                <label>Матриця A:</label>
-                <div id="matrixContainer" class="matrix-inputs"></div>
-              </div>
-
-              <div
-                id="vectorSection"
-                class="vector-input"
-                style="display: none"
-              >
-                <label>Вектор B:</label>
-                <div id="vectorContainer" class="vector-inputs"></div>
-              </div>
-            </div>
-
-            <div class="button-group">
-              <button id="calculateBtn" class="btn btn-success">
-                Обчислити
-              </button>
-              <button id="clearBtn" class="btn btn-secondary">Очистити</button>
-            </div>
-          </section>
-
-          <section class="output-section">
-            <label for="logOutput">Згенерований протокол обчислення:</label>
-            <textarea
-              id="logOutput"
-              class="log-output"
-              readonly
-              placeholder="Результати будуть виведені сюди..."
-            ></textarea>
-          </section>
-        </main>
+            <section class="output-section">
+              <label for="logOutput">Згенерований протокол обчислення:</label>
+              <textarea
+                id="logOutput"
+                class="log-output"
+                readonly
+                placeholder="Результати будуть виведені сюди..."
+              ></textarea>
+            </section>
+          </main>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
