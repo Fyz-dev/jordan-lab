@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JordanLab - Simplex Solver</title>
+    <title>JordanLab</title>
   </head>
   <body>
     <div id="app">
@@ -12,17 +12,19 @@
         <aside class="sidebar">
           <div class="sidebar-title">JordanLab</div>
           <nav class="sidebar-nav" aria-label="Навігація по сторінках">
-            <a href="/index.html" class="nav-link">Жордановi виключення</a>
+            <a href="/index.html" class="nav-link"
+              >Ранг, обернена матриця, обчислення СЛАУ</a
+            >
             <a href="/simplex.html" class="nav-link active" aria-current="page">
-              Simplex solver
+              Розв'язання ЗЛП (МЖВ)
             </a>
           </nav>
         </aside>
 
         <div class="container">
           <header>
-            <h1>Simplex Solver</h1>
-            <p>Метод МЖВ для задач лінійного програмування</p>
+            <h1>Розв'язання ЗЛП (МЖВ)</h1>
+            <p>Метод модифікованого жорданового виключення</p>
           </header>
 
           <main>
@@ -98,6 +100,6 @@ x1 + x2 <= 4</textarea
       </div>
     </div>
 
-    <script type="module" src="/src/simplex-main.ts"></script>
+    <script type="module" src="/src/simplex.ts"></script>
   </body>
 </html>

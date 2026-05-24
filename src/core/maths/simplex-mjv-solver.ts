@@ -169,12 +169,10 @@ export class SimplexMjvSolver {
     let phase2Iters = 0;
     while (true) {
       let c = -1;
-      let minZ = -1e-6;
-
       for (let j = 0; j < colsCount - 1; j++) {
-        if (matrix[rowsCount - 1][j] < minZ) {
-          minZ = matrix[rowsCount - 1][j];
+        if (matrix[rowsCount - 1][j] < -1e-6) {
           c = j;
+          break;
         }
       }
 
