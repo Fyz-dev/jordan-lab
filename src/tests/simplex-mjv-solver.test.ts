@@ -45,13 +45,13 @@ describe('SimplexMjvSolver Tests', () => {
       {
         name: 'Task 1: Maximization of the objective function with search for initial feasible and optimal solutions',
         params: {
-          objective: '1x1 + 2x2 - 1x3 - 1x4',
+          objective: 'x1 + 2x2 - x3 - 1x4',
           type: 'max',
           varsCount: 4,
           constraints: [
-            '1x1 + 1x2 - 1x3 - 2x4 <= 6',
-            '1x1 + 1x2 + 1x3 - 1x4 >= 5',
-            '2x1 - 1x2 + 3x3 + 4x4 <= 10',
+            'x1 + x2 - x3 - 2x4 <= 6',
+            'x1 + x2 + x3 - x4 >= 5',
+            '2x1 - x2 + 3x3 + 4x4 <= 10',
           ],
         } as SimplexParams,
         expected: {
@@ -67,9 +67,9 @@ describe('SimplexMjvSolver Tests', () => {
           type: 'min',
           varsCount: 4,
           constraints: [
-            '1x1 + 1x2 - 1x3 - 2x4 <= 6',
-            '1x1 + 1x2 + 1x3 - 1x4 >= 5',
-            '2x1 - 1x2 + 3x3 + 4x4 <= 10',
+            'x1 + x2 - x3 - 2x4 <= 6',
+            'x1 + x2 + x3 - x4 >= 5',
+            '2x1 - x2 + 3x3 + 4x4 <= 10',
           ],
         } as SimplexParams,
         expected: {
