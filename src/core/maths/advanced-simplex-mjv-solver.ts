@@ -82,12 +82,13 @@ export class AdvancedSimplexMjvSolver {
           b.push(-freeTerm);
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Невідома помилка.';
       return {
         success: false,
         solution: null,
         objectiveValue: null,
-        error: err.message,
+        error: message,
       };
     }
 

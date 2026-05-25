@@ -1,4 +1,5 @@
-import { type Matrix, MatrixMath } from '@/core/maths/matrix-math';
+import { MatrixMath } from '@/core/maths/matrix-math';
+import type { Matrix } from '@/core/maths/types';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 const PRECISION = 3;
