@@ -241,6 +241,25 @@ function buildAuxLabelMap(table: TableSnapshot): Map<number, number> {
   return map;
 }
 
+function buildPhaseDisplayMap(
+  executionLog: LogEntry<SimplexLogData>[]
+): Map<number, number> | null {
+  let lastZeroRowTable: TableSnapshot | null = null;
+
+  for (const entry of executionLog) {
+    if (entry.action === 'Видалення нуль-рядків' && entry.data?.matrix) {
+      lastZeroRowTable = getCurrentTableFromLog(entry);
+      continue;
+    }
+
+    if (entry.action === 'Всі нуль-рядки видалено') {
+      break;
+    }
+  }
+
+  return lastZeroRowTable ? buildAuxLabelMap(lastZeroRowTable) : null;
+}
+
 function remapLabel(label: string, auxMap: Map<number, number>): string {
   const rowMatch = label.match(/^(-?)y(\d+)(\s*=\s*)?$/);
   if (rowMatch) {
@@ -269,48 +288,6 @@ function remapTableSnapshot(
     matrix: table.matrix,
     rowLabels: table.rowLabels.map(label => remapLabel(label, auxMap)),
     colLabels: table.colLabels.map(label => remapLabel(label, auxMap)),
-  };
-}
-
-function getDisplayedRowRank(label: string): [number, number] {
-  const xMatch = label.match(/^x(\d+)\s*=\s*$/);
-  if (xMatch) {
-    const index = parseInt(xMatch[1], 10);
-    return [index === 1 ? 0 : 2, index];
-  }
-
-  const yMatch = label.match(/^y(\d+)\s*=\s*$/);
-  if (yMatch) {
-    return [1, parseInt(yMatch[1], 10)];
-  }
-
-  if (label === 'Z =') {
-    return [3, 0];
-  }
-
-  return [4, Number.MAX_SAFE_INTEGER];
-}
-
-function sortDisplayedTableRows(table: TableSnapshot): TableSnapshot {
-  const entries = table.rowLabels.map((label, index) => ({
-    label,
-    index,
-    row: table.matrix[index],
-  }));
-
-  entries.sort((left, right) => {
-    const [leftRank, leftIndex] = getDisplayedRowRank(left.label);
-    const [rightRank, rightIndex] = getDisplayedRowRank(right.label);
-
-    if (leftRank !== rightRank) return leftRank - rightRank;
-    if (leftIndex !== rightIndex) return leftIndex - rightIndex;
-    return left.index - right.index;
-  });
-
-  return {
-    matrix: entries.map(entry => entry.row),
-    rowLabels: entries.map(entry => entry.label),
-    colLabels: [...table.colLabels],
   };
 }
 
@@ -348,7 +325,8 @@ function buildProtocol(
 ): string {
   const blocks: string[] = [];
   let currentTable: TableSnapshot | null = null;
-  let phaseDisplayMap: Map<number, number> | null = null;
+  let phaseDisplayMap: Map<number, number> | null =
+    buildPhaseDisplayMap(executionLog);
   let zeroRowStepIndex = 0;
 
   blocks.push('Постановка задачі:', '');
@@ -429,7 +407,9 @@ function buildProtocol(
 
     if (entry.action === 'Всі нуль-рядки видалено') {
       blocks.push('Всі нуль-рядки видалено.', '');
-      phaseDisplayMap = currentTable ? buildAuxLabelMap(currentTable) : null;
+      phaseDisplayMap =
+        phaseDisplayMap ??
+        (currentTable ? buildAuxLabelMap(currentTable) : null);
       continue;
     }
 
@@ -457,15 +437,12 @@ function buildProtocol(
             rowLabels: entry.data.rowLabels ?? [],
             colLabels: entry.data.colLabels ?? [],
           };
-      const sortedDisplayTable = phaseDisplayMap
-        ? sortDisplayedTableRows(displayTable)
-        : displayTable;
 
       blocks.push(
         formatMatrixTable(
-          sortedDisplayTable.matrix,
-          sortedDisplayTable.rowLabels,
-          sortedDisplayTable.colLabels
+          displayTable.matrix,
+          displayTable.rowLabels,
+          displayTable.colLabels
         ),
         ''
       );
@@ -506,15 +483,12 @@ function buildProtocol(
             rowLabels: entry.data.rowLabels ?? [],
             colLabels: entry.data.colLabels ?? [],
           };
-      const sortedDisplayTable = phaseDisplayMap
-        ? sortDisplayedTableRows(displayTable)
-        : displayTable;
 
       blocks.push(
         formatMatrixTable(
-          sortedDisplayTable.matrix,
-          sortedDisplayTable.rowLabels,
-          sortedDisplayTable.colLabels
+          displayTable.matrix,
+          displayTable.rowLabels,
+          displayTable.colLabels
         ),
         ''
       );
