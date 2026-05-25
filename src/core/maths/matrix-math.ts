@@ -12,7 +12,6 @@ export class MatrixMath {
   public invertMatrix(A: Matrix, shouldClear: boolean = true): Matrix | null {
     if (shouldClear) this.logger.clear();
 
-    // must be a non-empty square matrix
     if (!A || A.length === 0) {
       throw new Error('Обернення матриці неможливе: порожня матриця');
     }
