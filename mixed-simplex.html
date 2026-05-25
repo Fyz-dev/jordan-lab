@@ -15,18 +15,20 @@
             <a href="/index.html" class="nav-link"
               >Ранг, обернена матриця, обчислення СЛАУ</a
             >
-            <a href="/simplex.html" class="nav-link active" aria-current="page">
-              Розв'язання ЗЛП (МЖВ)
-            </a>
-            <a href="/mixed-simplex.html" class="nav-link"
-              >Змішані обмеження ЗЛП</a
+            <a href="/simplex.html" class="nav-link">Розв'язання ЗЛП (МЖВ)</a>
+            <a
+              href="/mixed-simplex.html"
+              class="nav-link active"
+              aria-current="page"
             >
+              Змішані обмеження ЗЛП
+            </a>
           </nav>
         </aside>
 
         <div class="container">
           <header>
-            <h1>Розв'язання ЗЛП (МЖВ)</h1>
+            <h1>Змішані обмеження ЗЛП</h1>
             <p>Метод модифікованих жорданових виключень</p>
           </header>
 
@@ -34,68 +36,72 @@
             <section class="input-section simplex-form-section">
               <div class="simplex-grid">
                 <div class="size-input">
-                  <label for="simplexType">Тип задачі:</label>
-                  <select id="simplexType" class="mode-select">
+                  <label for="mixedSimplexType">Тип задачі:</label>
+                  <select id="mixedSimplexType" class="mode-select">
                     <option value="max">Максимізація</option>
                     <option value="min">Мінімізація</option>
                   </select>
                 </div>
 
                 <div class="size-input">
-                  <label for="simplexVarsCount">Кількість змінних:</label>
+                  <label for="mixedSimplexVarsCount">Кількість змінних:</label>
                   <input
                     type="number"
-                    id="simplexVarsCount"
+                    id="mixedSimplexVarsCount"
                     min="1"
                     max="10"
-                    value="2"
+                    value="4"
                     class="size-input-field"
                   />
                 </div>
               </div>
 
               <div class="size-input">
-                <label for="simplexObjective">Цільова функція:</label>
+                <label for="mixedSimplexObjective">Цільова функція:</label>
                 <input
                   type="text"
-                  id="simplexObjective"
+                  id="mixedSimplexObjective"
                   class="size-input-field"
-                  value="3x1 + 5x2"
-                  placeholder="Наприклад: 3x1 + 5x2"
+                  value="10x1 - x2 - 42x3 - 52x4"
+                  placeholder="Наприклад: 10x1 - x2 - 42x3 - 52x4"
                 />
               </div>
 
               <div class="size-input">
-                <label for="simplexConstraints"
+                <label for="mixedSimplexConstraints"
                   >Обмеження (кожне з нового рядка):</label
                 >
                 <textarea
-                  id="simplexConstraints"
+                  id="mixedSimplexConstraints"
                   class="simplex-constraints"
-                  placeholder="2x1 + 3x2 <= 8&#10;x1 + x2 <= 4"
+                  placeholder="-2x1 + x2 + x3 + 3x4 = 2&#10;-3x1 + 2x2 - 3x3 = 7"
                 >
-2x1 + 3x2 <= 8
-x1 + x2 <= 4</textarea
+-2x1 + x2 + x3 + 3x4 = 2
+-3x1 + 2x2 - 3x3 = 7
+-3x1 + x2 + 4x3 + x4 <= 1
+3x1 - 2x2 + 2x3 - 2x4 <= -9</textarea
                 >
               </div>
 
               <div class="button-group">
-                <button id="simplexSolveBtn" class="btn btn-success">
+                <button id="mixedSimplexSolveBtn" class="btn btn-success">
                   Розв'язати
                 </button>
-                <button id="simplexClearBtn" class="btn btn-secondary">
+                <button id="mixedSimplexClearBtn" class="btn btn-secondary">
                   Очистити
                 </button>
               </div>
             </section>
 
             <section class="output-section">
-              <label for="simplexResult">Результат:</label>
+              <label for="mixedSimplexResult"
+                >Згенерований протокол обчислення:</label
+              >
               <textarea
-                id="simplexResult"
+                id="mixedSimplexResult"
                 class="log-output"
                 readonly
-                placeholder="Результати simplex solver будуть виведені сюди..."
+                placeholder="Результати будуть виведені сюди..."
               ></textarea>
             </section>
           </main>
@@ -103,6 +109,6 @@ x1 + x2 <= 4</textarea
       </div>
     </div>
 
-    <script type="module" src="/src/simplex.ts"></script>
+    <script type="module" src="/src/mixed-simplex.ts"></script>
   </body>
 </html>
